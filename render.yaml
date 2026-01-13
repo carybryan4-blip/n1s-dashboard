@@ -1,0 +1,18 @@
+# render.yaml - Render Blueprint for automatic deployment
+# Place this in your repo root
+
+services:
+  - type: web
+    name: n1s-dashboard-api
+    runtime: node
+    region: oregon  # Change to your preferred region
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SYNC_API_KEY
+        sync: false  # You'll set this manually in Render dashboard
+    healthCheckPath: /api/status

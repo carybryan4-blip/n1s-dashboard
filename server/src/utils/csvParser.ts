@@ -1,4 +1,4 @@
-import { Player } from '../types/types';
+import { Player } from '../types';
 
 export function parsePlayerDataCSV(content: string): Player[] {
   const lines = content.trim().split('\n');

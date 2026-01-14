@@ -3,7 +3,7 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { getLeaderboard } from './utils/csvParser';
-import { Player, WSMessage, ServerStatus } from '../../shared/types';
+import { Player, WSMessage, ServerStatus } from './types';
 import * as fs from 'fs';
 import * as path from 'path';
 

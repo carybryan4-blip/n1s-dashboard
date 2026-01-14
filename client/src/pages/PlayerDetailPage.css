@@ -53,10 +53,10 @@
   justify-content: center;
 }
 
-.spinner-name {
-  font-size: 0.875rem;
+.spinner-initial {
+  font-size: 2.5rem;
+  font-weight: 700;
   color: var(--accent-secondary);
-  text-transform: capitalize;
 }
 
 .player-title h1 {
@@ -64,9 +64,10 @@
   margin-bottom: 0.25rem;
 }
 
-.clan-tag {
+.spinner-type {
   font-size: 1rem;
   color: var(--accent-secondary);
+  text-transform: capitalize;
 }
 
 /* Stats Grid */

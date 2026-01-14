@@ -48,14 +48,12 @@ const PlayerDetailPage: React.FC = () => {
 
       <div className="player-header">
         <div className="player-avatar-large">
-          <span className="spinner-name">{player.spinnerId}</span>
+          <span className="spinner-initial">{player.spinnerId.charAt(0).toUpperCase()}</span>
         </div>
 
         <div className="player-title">
           <h1>{player.userId}</h1>
-          {player.clan && (
-            <span className="clan-tag">[{player.clan}]</span>
-          )}
+          <span className="spinner-type">{player.spinnerId}</span>
         </div>
       </div>
 
@@ -77,7 +75,7 @@ const PlayerDetailPage: React.FC = () => {
         <h2>Details</h2>
         <div className="details-grid">
           <div className="detail-item">
-            <span className="detail-label">Spinner</span>
+            <span className="detail-label">Spinner Type</span>
             <span className="detail-value">{player.spinnerId}</span>
           </div>
 
@@ -85,13 +83,6 @@ const PlayerDetailPage: React.FC = () => {
             <span className="detail-label">Counter-Spin</span>
             <span className={`detail-value ${player.counterSpin ? 'enabled' : 'disabled'}`}>
               {player.counterSpin ? 'Enabled' : 'Disabled'}
-            </span>
-          </div>
-
-          <div className="detail-item">
-            <span className="detail-label">Clan</span>
-            <span className="detail-value">
-              {player.clan || 'None'}
             </span>
           </div>
         </div>

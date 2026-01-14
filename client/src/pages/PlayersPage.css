@@ -67,22 +67,6 @@
   color: var(--text-primary);
 }
 
-.clan-filter {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border-radius: 8px;
-  font-size: 1rem;
-  min-width: 150px;
-  cursor: pointer;
-}
-
-.clan-filter:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-}
-
 /* Results */
 .results-info {
   font-size: 0.875rem;

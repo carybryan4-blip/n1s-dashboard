@@ -6,27 +6,13 @@ import './PlayersPage.css';
 const PlayersPage: React.FC = () => {
   const { players } = useSocket();
   const [search, setSearch] = useState('');
-  const [filterClan, setFilterClan] = useState<string>('');
 
-  // Get unique clans
-  const clans = useMemo(() => {
-    const clanSet = new Set<string>();
-    players.forEach((p) => {
-      if (p.clan) clanSet.add(p.clan);
-    });
-    return Array.from(clanSet).sort();
-  }, [players]);
-
-  // Filter players
+  // Filter players by search only
   const filteredPlayers = useMemo(() => {
     return players.filter((player) => {
-      const matchesSearch = player.userId
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const matchesClan = !filterClan || player.clan === filterClan;
-      return matchesSearch && matchesClan;
+      return player.userId.toLowerCase().includes(search.toLowerCase());
     });
-  }, [players, search, filterClan]);
+  }, [players, search]);
 
   return (
     <div className="players-page">
@@ -55,21 +41,6 @@ const PlayersPage: React.FC = () => {
             </button>
           )}
         </div>
-
-        {clans.length > 0 && (
-          <select
-            value={filterClan}
-            onChange={(e) => setFilterClan(e.target.value)}
-            className="clan-filter"
-          >
-            <option value="">All Clans</option>
-            {clans.map((clan) => (
-              <option key={clan} value={clan}>
-                [{clan}]
-              </option>
-            ))}
-          </select>
-        )}
       </div>
 
       <div className="results-info">

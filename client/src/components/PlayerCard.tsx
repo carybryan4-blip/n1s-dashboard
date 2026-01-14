@@ -26,14 +26,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, rank, showDetails = tru
       )}
       
       <div className="player-avatar">
-        <span className="avatar-spinner">{player.spinnerId}</span>
+        <span className="avatar-spinner">{player.spinnerId.charAt(0).toUpperCase()}</span>
       </div>
 
       <div className="player-info">
         <h3 className="player-name">{player.userId}</h3>
-        {player.clan && (
-          <span className="player-clan">[{player.clan}]</span>
-        )}
+        <span className="player-spinner-type">{player.spinnerId}</span>
       </div>
 
       {showDetails && (

@@ -3,15 +3,61 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { getLeaderboard } from './utils/csvParser';
-import { Player, WSMessage, ServerStatus } from './types/types';
+import { Player, WSMessage, ServerStatus } from '../../shared/types';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Configuration
 const PORT = process.env.PORT || 3001;
 const SYNC_API_KEY = process.env.SYNC_API_KEY || 'change-this-in-production';
+const DATA_FILE = process.env.DATA_FILE || './data/players.json';
 
-// State - stored in memory, persists until server restarts
+// State - stored in memory, loaded from file on startup
 let players: Player[] = [];
 let lastUpdate: Date = new Date();
+
+// Ensure data directory exists
+function ensureDataDir() {
+  const dir = path.dirname(DATA_FILE);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`[Storage] Created data directory: ${dir}`);
+  }
+}
+
+// Load players from file
+function loadFromFile(): boolean {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, 'utf-8');
+      const parsed = JSON.parse(data);
+      players = parsed.players || [];
+      lastUpdate = new Date(parsed.lastUpdate || Date.now());
+      console.log(`[Storage] Loaded ${players.length} players from file`);
+      return true;
+    }
+  } catch (error) {
+    console.error('[Storage] Error loading from file:', error);
+  }
+  return false;
+}
+
+// Save players to file
+function saveToFile(): boolean {
+  try {
+    ensureDataDir();
+    const data = JSON.stringify({
+      players,
+      lastUpdate: lastUpdate.toISOString(),
+    }, null, 2);
+    fs.writeFileSync(DATA_FILE, data, 'utf-8');
+    console.log(`[Storage] Saved ${players.length} players to file`);
+    return true;
+  } catch (error) {
+    console.error('[Storage] Error saving to file:', error);
+    return false;
+  }
+}
 
 // Express setup
 const app = express();
@@ -108,6 +154,9 @@ app.post('/api/sync', (req, res) => {
 
     console.log(`[Sync] Received ${players.length} players`);
 
+    // Save to file for persistence
+    saveToFile();
+
     // Broadcast to all connected clients
     broadcastUpdate();
 
@@ -139,16 +188,22 @@ io.on('connection', (socket) => {
   });
 });
 
+// Load persisted data on startup
+ensureDataDir();
+loadFromFile();
+
 // Start server
 httpServer.listen(PORT, () => {
   console.log(`[Server] Running on http://localhost:${PORT}`);
   console.log(`[Server] Sync endpoint: POST /api/sync (requires x-api-key header)`);
+  console.log(`[Server] Data file: ${DATA_FILE}`);
   console.log(`[Server] Players in memory: ${players.length}`);
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
   console.log('\n[Server] Shutting down...');
+  saveToFile(); // Save before exit
   httpServer.close();
   process.exit(0);
 });
